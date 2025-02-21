@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Headless Dashboard
 
-First, run the development server:
+A highly customizable dashboard for your needs.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Development Setup
+
+### Setup Docker
+
+Start the Docker containers:
+
+```sh
+docker-compose up
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> **Note:** If you are using Linux, you may need to start Docker manually:
+>
+> ```sh
+> sudo systemctl start docker
+> sudo docker compose up
+> ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Initialize Database Tables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Synchronize your database schema with the application:
 
-## Learn More
+```sh
+yarn dbpush
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Run Locally
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Start the development server:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```sh
+yarn dev
+```
 
-## Deploy on Vercel
+## Understanding the Code Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Why Are There Multiple Functions for Querying and Mutating Data?
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The codebase is structured into distinct function categories to improve organization, reusability, and maintainability:
+
+#### Actions
+- Handle authentication and input validation.
+- Ensure that only authorized users perform specific actions.
+- **TL;DR:** Used for authentication and data validation.
+
+#### Use-Cases
+- Manage multiple data-access calls.
+- Implement business logic and coordinate workflows.
+- **TL;DR:** Used for multiple database operation calls.
+
+#### Data-Access
+- Directly interact with the database (CRUD operations).
+- Keep database logic separate from other parts of the app.
+- **TL;DR:** Used for direct database interactions.
+
+## Miscellaneous
+
+### TypeScript Signature Truncation Issue
+
+If TypeScript truncates type signatures, follow these steps:
+
+#### Recommended Fix (Linux):
+
+```sh
+yarn patchts
+chmod +x ./patch-ts.sh # run this if permission is denied
+yarn
+```
+- Then fully restart your development environment.
+- Verify that truncation is resolved in type hints.
+
+#### Manual Fix:
+
+1. Open `node_modules/typescript/lib/typescript.js` (or `node_modules/typescript/lib/tsserver.js`).
+2. Locate this line:
+   ```js
+   var defaultMaximumTruncationLength = 160
+   ```
+3. Change it to a higher value (e.g., `1000`, `1e6`, etc.).
+4. Save the file.
+5. Fully restart your development environment.
+6. Verify that truncation is resolved in type hints.
+
+

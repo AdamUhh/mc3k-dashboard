@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,9 +23,36 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/shadcn/*": [
+        "./src/components/ui/*"
+      ],
+      "@/components/*": [
+        "./src/components/*"
+      ],
+      "@/db/*": [
+        "./src/lib/db/*"
+      ],
+      "@/data-access/*": [
+        "./src/data-access/*"
+      ],
+      "@/use-cases/*": [
+        "./src/use-cases/*"
+      ],
+      "@/constants/*": [
+        "./src/constants/*"
+      ],
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

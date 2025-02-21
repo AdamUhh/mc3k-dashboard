@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1737461552553,
+      "tag": "0000_windy_james_howlett",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1737462049553,
+      "tag": "0001_watery_dakota_north",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1737644757828,
+      "tag": "0002_eminent_thor",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1737761896503,
+      "tag": "0003_flawless_micromax",
+      "breakpoints": true
+    }
+  ]
+}
