@@ -30,6 +30,8 @@ export function UpdateProductForm({
     shortDescription,
     features,
     collections,
+    brandId,
+    modelId,
 }: UpdateProductFormType) {
     const form = useForm<UpdateProductFormType>({
         resolver: zodResolver(updateProductFormSchema),
@@ -38,6 +40,8 @@ export function UpdateProductForm({
             name,
             handle,
             description,
+            brandId,
+            modelId,
             shortDescription: shortDescription || '',
             teaserDescription: teaserDescription || '',
             features: features?.sort((f) => f?.order || 0) || [],
@@ -78,18 +82,21 @@ export function UpdateProductForm({
     ): UpdateProductType['collections'] => {
         if (!collections?.length) return {};
 
+        console.log('collections', JSON.stringify(collections, null, 2));
+
         const categorizedCollectionIds = collections.reduce(
             (acc, collection) => {
-                if (collection.isNew) acc.new.push(collection);
+                if (collection.isNew)
+                    acc.new.push({ ...collection, id: collection.id! });
                 else if (collection.toDelete)
                     acc.delete.push({ id: collection.id! });
-                else acc.update.push({ ...collection, id: collection.id! });
+                // else acc.update.push({ ...collection, id: collection.id! });
                 return acc;
             },
             {
-                new: [] as Collection[],
+                new: [] as (Collection & { id: string })[],
                 delete: [] as { id: string }[],
-                update: [] as (Collection & { id: string })[],
+                update: [] as (Collection & { id: string; newId: string })[],
             }
         );
 
@@ -103,6 +110,7 @@ export function UpdateProductForm({
             .slice(0, minLength)
             .map((feature, i) => ({
                 ...feature,
+                newId: feature.id,
                 id: categorizedCollectionIds.delete[i].id,
             }));
 

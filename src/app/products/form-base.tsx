@@ -85,12 +85,6 @@ export const ProductFormBase = ({
         name: 'features',
     });
 
-    const fieldsCollection = useFieldArray({
-        keyName: 'customId',
-        control: form.control,
-        name: 'collections',
-    });
-
     const isUpdateMode = Boolean(form?.formState?.defaultValues?.id);
     return (
         <Form {...form}>
@@ -149,11 +143,7 @@ export const ProductFormBase = ({
                             value="attributes"
                             className={cn('space-y-4 overflow-y-auto p-2')}
                         >
-                            <Attributes
-                                form={form}
-                                isPending={isPending}
-                                fieldsCollection={fieldsCollection}
-                            />
+                            <Attributes form={form} isPending={isPending} />
                         </TabsContent>
                         <TabsContent
                             value="variants"

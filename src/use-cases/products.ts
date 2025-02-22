@@ -120,7 +120,8 @@ export async function updateProductUseCase(
                     Promise.all(
                         updateCollections.map((f) =>
                             updateProductToCollections(userId, {
-                                collectionId: f.id,
+                                id: f.id,
+                                collectionId: f.newId,
                             })
                         )
                     ),

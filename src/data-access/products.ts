@@ -1,7 +1,9 @@
 import { and, eq } from 'drizzle-orm';
 
 import db from '@/db/index';
+import { brandsTable } from '@/db/schemas/brands';
 import { collectionsTable } from '@/db/schemas/collections';
+import { modelsTable } from '@/db/schemas/models';
 import {
     featuresTable,
     productsTable,
@@ -18,7 +20,7 @@ import {
 } from '@/db/validations/products';
 
 export async function getCoreData(authenticatedUserId: string) {
-    const [collections] = await Promise.all([
+    const [collections, models, brands] = await Promise.all([
         db
             .select({
                 id: collectionsTable.id,
@@ -26,9 +28,25 @@ export async function getCoreData(authenticatedUserId: string) {
             })
             .from(collectionsTable)
             .where(eq(collectionsTable.userId, authenticatedUserId)),
+
+        db
+            .select({
+                id: modelsTable.id,
+                name: modelsTable.name,
+            })
+            .from(modelsTable)
+            .where(eq(modelsTable.userId, authenticatedUserId)),
+
+        db
+            .select({
+                id: brandsTable.id,
+                name: brandsTable.name,
+            })
+            .from(brandsTable)
+            .where(eq(brandsTable.userId, authenticatedUserId)),
     ]);
 
-    return { collections };
+    return { collections, brands, models };
 }
 
 // data access will be used to call the actual database
@@ -43,6 +61,8 @@ export async function getProducts(
             description: true,
             shortDescription: true,
             teaserDescription: true,
+            brandId: true,
+            modelId: true,
         },
         with: {
             features: {
@@ -54,15 +74,15 @@ export async function getProducts(
                 },
             },
             collections: {
-                with: {
-                    collection: {
-                        columns: {
-                            id: true, // Add this
-                            name: true,
-                        },
-                    },
-                },
-                columns: {}, // Remove collectionId from here
+                // with: {
+                //     collection: {
+                //         columns: {
+                //             id: true, // Add this
+                //             // name: true,
+                //         },
+                //     },
+                // },
+                columns: { collectionId: true }, // Remove collectionId from here
             },
         },
         where: (product, { eq }) => eq(product.userId, authenticatedUser),
@@ -71,12 +91,12 @@ export async function getProducts(
     return result.map((product) => ({
         ...product,
         collections: product.collections.map((c) => ({
-            id: c.collection.id,
-            name: c.collection.name,
+            id: c.collectionId,
+            // name: c.collection.name,
         })),
     })) as unknown as UpdateProductFormType[];
 
-    // return result as unknown as UpdateProductFormType[];
+    return result as unknown as UpdateProductFormType[];
 }
 
 export async function createProduct(userId: string, values: ServerProduct) {
@@ -140,15 +160,21 @@ export async function updateFeature(
 
 export async function updateProductToCollections(
     userId: string,
-    collection: Partial<ServerProductsToCollection> & { collectionId: string }
+    collection: Partial<ServerProductsToCollection> & {
+        id: string;
+        collectionId: string;
+    }
 ) {
+    // id is the old ID, collectionId is the new one
+    const { id, collectionId } = collection;
+
     return db
         .update(productsToCollectionsTable)
-        .set(collection)
+        .set({ collectionId })
         .where(
             and(
-                eq(featuresTable.id, collection.collectionId),
-                eq(featuresTable.userId, userId)
+                eq(productsToCollectionsTable.collectionId, id),
+                eq(productsToCollectionsTable.userId, userId)
             )
         )
         .returning();

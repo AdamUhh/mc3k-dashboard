@@ -26,7 +26,7 @@ import {
 } from '../form';
 import { Popover, PopoverContent, PopoverTrigger } from '../popover';
 
-export interface Option {
+interface Option {
     id: string;
     name: string;
     toDelete?: boolean;
@@ -63,14 +63,17 @@ function ComboboxButton({
     placeholder,
     isDirty,
     handleToggleSelect,
+    getDisplayValue,
 }: {
     field: ControllerRenderProps;
     disabled?: boolean;
     placeholder: string;
     isDirty?: boolean;
     handleToggleSelect: (field: ControllerRenderProps, option: Option) => void;
+    getDisplayValue: (option: Option) => string;
 }) {
     const { error } = useFormField();
+
     return (
         <PopoverTrigger asChild>
             <FormControl>
@@ -99,7 +102,8 @@ function ComboboxButton({
                                     )}
                                 >
                                     <span className="flex h-full w-full items-center">
-                                        {option.name}
+                                        {/* {option.name} */}
+                                        {getDisplayValue(option)}
                                     </span>
                                     <Button
                                         variant="ghost"
@@ -166,6 +170,14 @@ export default function FormMultiCombobox({
         ? form.formState.dirtyFields[formName]?.[index]?.[fieldKey]
         : form.formState.dirtyFields[formName];
 
+    const getDisplayValue = (option: Option) => {
+        const value = option.id ? option.id : option;
+        if (!value) return placeholder;
+
+        const result = data?.find((d) => d.id === value);
+        return result?.name || placeholder;
+    };
+
     const handleToggleSelect = (field: ControllerRenderProps, d: Option) => {
         const currentValue = field.value || [];
         const name = getFieldName();
@@ -203,16 +215,6 @@ export default function FormMultiCombobox({
 
         form.clearErrors(name);
     };
-    // const handleToggleSelect = (field: ControllerRenderProps, d: Option) => {
-    //     const currentValue = field.value || [];
-    //     const updatedValue = currentValue.some((s: Option) => s.id === d.id)
-    //         ? currentValue.filter((s: Option) => s.id !== d.id)
-    //         : [...currentValue, d];
-    //
-    //     const name = getFieldName();
-    //     form.setValue(name, updatedValue, { shouldDirty: true });
-    //     form.clearErrors(name);
-    // };
 
     return (
         <>
@@ -234,6 +236,7 @@ export default function FormMultiCombobox({
                                 placeholder={placeholder}
                                 isDirty={isDirty}
                                 handleToggleSelect={handleToggleSelect}
+                                getDisplayValue={getDisplayValue}
                             />
                             <PopoverContent className="popover-content-width-full w-full p-0">
                                 <Command

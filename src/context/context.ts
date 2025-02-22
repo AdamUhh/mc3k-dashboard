@@ -2,6 +2,8 @@ import { Dispatch, SetStateAction, createContext, useContext } from 'react';
 
 export type CoreDataType = {
     collections: { id: string; name: string }[];
+    brands: { id: string; name: string }[];
+    models: { id: string; name: string }[];
 };
 
 export interface AppStateContext {

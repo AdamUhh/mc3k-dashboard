@@ -62,6 +62,7 @@ export function UpdateProductButton({
     description,
     teaserDescription,
     shortDescription,
+    brandId,modelId,
     features,
     collections,
 }: UpdateProductFormType) {
@@ -98,10 +99,12 @@ export function UpdateProductButton({
                         id={id}
                         name={name}
                         handle={handle}
-                        features={features}
                         description={description}
                         teaserDescription={teaserDescription}
                         shortDescription={shortDescription}
+                        brandId={brandId}
+                        modelId={modelId}
+                        features={features}
                         collections={collections}
                     />
                 }
